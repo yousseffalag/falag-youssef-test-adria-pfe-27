@@ -6,11 +6,12 @@ créées au démarrage si la base est vide.
 
 `feign/AccountClient` appelle `account-service` avec OpenFeign. Chaque méthode porte une annotation
 `@CircuitBreaker` Resilience4J et un fallback simple qui renvoie une erreur HTTP appropriée sans inventer de données.
-Les réponses des transactions incluent aussi les données du compte récupérées par Feign. Le plafond local est `1000`.
+Les réponses des transactions incluent aussi les données du compte récupérées par Feign. Le plafond `1000` est fourni
+par `config-service` au démarrage.
 
 ## Lancer
 
-Démarrer `account-service`, puis depuis ce dossier :
+Démarrer `discovery-service`, `config-service` et `account-service`, puis depuis ce dossier :
 
 ```bash
 mvn spring-boot:run
@@ -21,4 +22,11 @@ outils MCP sont publiés par le serveur MCP du service.
 
 La console H2 est accessible à `http://localhost:8082/h2-console`. Utiliser l'URL JDBC
 `jdbc:h2:mem:transactiondb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE`, l'utilisateur `sa` et un mot de passe vide.
+
+## Événements Kafka
+
+Depuis la racine du projet, démarrer le broker local avec `docker compose -f docker-compose.kafka.yml up -d`, puis
+lancer `transaction-consumer-service`. Après validation et commit d'une transaction, Transaction Service publie un
+événement JSON dans `bank.transactions.created`, avec `accountId` comme clé. Le consommateur journalise l'événement
+reçu sans modifier les données bancaires.
 

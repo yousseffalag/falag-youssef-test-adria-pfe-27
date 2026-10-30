@@ -5,8 +5,10 @@ import com.falag.youssef.client.dto.AccountDto;
 import com.falag.youssef.client.dto.OperationRequest;
 import com.falag.youssef.domain.Transaction;
 import com.falag.youssef.domain.TransactionType;
+import com.falag.youssef.event.TransactionCreatedMessage;
 import com.falag.youssef.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,12 +28,15 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountClient accountClient;
     private final BigDecimal maxAmount;
+    private final ApplicationEventPublisher eventPublisher;
 
     public TransactionService(TransactionRepository transactionRepository, AccountClient accountClient,
-                              @Value("${bank.transaction.max-amount}") BigDecimal maxAmount) {
+                              @Value("${bank.transaction.max-amount}") BigDecimal maxAmount,
+                              ApplicationEventPublisher eventPublisher) {
         this.transactionRepository = transactionRepository;
         this.accountClient = accountClient;
         this.maxAmount = maxAmount;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional(readOnly = true)
@@ -67,6 +72,7 @@ public class TransactionService {
                 .createdAt(Instant.now())
                 .build());
         AccountDto updatedAccount = accountClient.debit(accountId, new OperationRequest(amount, currency));
+        publishCreated(transaction);
         return new TransactionView(transaction, updatedAccount);
     }
 
@@ -104,8 +110,14 @@ public class TransactionService {
             throw transferFailure;
         }
 
+        publishCreated(debit);
+        publishCreated(credit);
         return new TransferResult(transferId, new TransactionView(debit, updatedSource),
                 new TransactionView(credit, updatedTarget));
+    }
+
+    private void publishCreated(Transaction transaction) {
+        eventPublisher.publishEvent(TransactionCreatedMessage.from(transaction));
     }
 
     private Transaction createTransferTransaction(UUID accountId, BigDecimal amount, String currency,
