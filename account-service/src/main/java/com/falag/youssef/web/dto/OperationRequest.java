@@ -1,4 +1,4 @@
-package com.falag.youssef.accountservice.web.dto;
+package com.falag.youssef.web.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

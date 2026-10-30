@@ -1,4 +1,4 @@
-package com.falag.youssef.accountservice.domain;
+package com.falag.youssef.domain;
 
 public enum AccountStatus {
     ACTIVE,

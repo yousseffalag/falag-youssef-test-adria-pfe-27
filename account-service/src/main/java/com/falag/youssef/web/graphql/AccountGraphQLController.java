@@ -1,8 +1,8 @@
-package com.falag.youssef.accountservice.web.graphql;
+package com.falag.youssef.web.graphql;
 
-import com.falag.youssef.accountservice.domain.AccountStatus;
-import com.falag.youssef.accountservice.service.AccountService;
-import com.falag.youssef.accountservice.web.dto.AccountResponse;
+import com.falag.youssef.domain.AccountStatus;
+import com.falag.youssef.service.AccountService;
+import com.falag.youssef.web.dto.AccountResponse;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;

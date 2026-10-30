@@ -1,7 +1,7 @@
-package com.falag.youssef.accountservice.web.dto;
+package com.falag.youssef.web.dto;
 
-import com.falag.youssef.accountservice.domain.Account;
-import com.falag.youssef.accountservice.domain.AccountStatus;
+import com.falag.youssef.domain.Account;
+import com.falag.youssef.domain.AccountStatus;
 
 import java.util.UUID;
 

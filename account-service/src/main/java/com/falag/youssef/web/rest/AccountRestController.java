@@ -1,12 +1,11 @@
-package com.falag.youssef.accountservice.web.rest;
+package com.falag.youssef.web.rest;
 
-import com.falag.youssef.accountservice.domain.Account;
-import com.falag.youssef.accountservice.domain.AccountStatus;
-import com.falag.youssef.accountservice.service.AccountService;
-import com.falag.youssef.accountservice.web.dto.AccountResponse;
-import com.falag.youssef.accountservice.web.dto.CreateAccountRequest;
-import com.falag.youssef.accountservice.web.dto.OperationRequest;
-import com.falag.youssef.accountservice.web.dto.StatusRequest;
+import com.falag.youssef.domain.Account;
+import com.falag.youssef.service.AccountService;
+import com.falag.youssef.web.dto.AccountResponse;
+import com.falag.youssef.web.dto.CreateAccountRequest;
+import com.falag.youssef.web.dto.OperationRequest;
+import com.falag.youssef.web.dto.StatusRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,8 +1,8 @@
-package com.falag.youssef.accountservice;
+package com.falag.youssef;
 
-import com.falag.youssef.accountservice.domain.Account;
-import com.falag.youssef.accountservice.domain.AccountStatus;
-import com.falag.youssef.accountservice.repository.AccountRepository;
+import com.falag.youssef.domain.Account;
+import com.falag.youssef.domain.AccountStatus;
+import com.falag.youssef.repository.AccountRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

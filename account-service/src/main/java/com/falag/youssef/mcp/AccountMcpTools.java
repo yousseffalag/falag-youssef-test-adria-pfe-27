@@ -1,9 +1,8 @@
-package com.falag.youssef.accountservice.mcp;
+package com.falag.youssef.mcp;
 
-import com.falag.youssef.accountservice.domain.Account;
-import com.falag.youssef.accountservice.domain.AccountStatus;
-import com.falag.youssef.accountservice.service.AccountService;
-import com.falag.youssef.accountservice.web.dto.AccountResponse;
+import com.falag.youssef.domain.AccountStatus;
+import com.falag.youssef.service.AccountService;
+import com.falag.youssef.web.dto.AccountResponse;
 import org.springframework.ai.mcp.server.annotation.McpTool;
 import org.springframework.ai.mcp.server.annotation.McpToolParam;
 import org.springframework.stereotype.Component;

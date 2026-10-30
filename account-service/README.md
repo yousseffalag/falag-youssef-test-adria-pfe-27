@@ -26,7 +26,7 @@ mvn spring-boot:run
 GraphQL est exposé sur `/graphql` (schéma dans `src/main/resources/graphql/account.graphqls`).
 Le serveur MCP expose des outils de lecture et de gestion de compte via HTTP.
 
-Les erreurs métier utilisent les réponses `ProblemDetail` : compte absent en `404`, règle métier en `422`.
 Les requêtes d'exemple sont dans `rest-client-tests.http`.
 
-L'intégration Feign/Resilience4J avec `transaction-service` reste à faire dans l'étape suivante.
+Le service reste volontairement limité à la gestion des comptes. Les réponses d'erreur utilisent `ResponseStatusException`
+de Spring, sans exceptions métier personnalisées ni handler global.

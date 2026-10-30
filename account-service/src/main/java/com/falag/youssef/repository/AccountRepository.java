@@ -1,6 +1,6 @@
-package com.falag.youssef.accountservice.repository;
+package com.falag.youssef.repository;
 
-import com.falag.youssef.accountservice.domain.Account;
+import com.falag.youssef.domain.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

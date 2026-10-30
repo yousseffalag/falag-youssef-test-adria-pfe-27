@@ -1,8 +1,5 @@
-package com.falag.youssef.accountservice.domain;
+package com.falag.youssef.domain;
 
-import com.falag.youssef.accountservice.exception.AccountNotActiveException;
-import com.falag.youssef.accountservice.exception.CurrencyMismatchException;
-import com.falag.youssef.accountservice.exception.InsufficientFundsException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -62,19 +59,10 @@ public class Account {
                 .build();
     }
 
-    public void assertOperable(String operationCurrency) {
-        if (status != AccountStatus.ACTIVE) {
-            throw new AccountNotActiveException(id);
-        }
-        if (!currency.equalsIgnoreCase(operationCurrency)) {
-            throw new CurrencyMismatchException(currency, operationCurrency);
-        }
-    }
-
     public void debit(double amount) {
         assertValidAmount(amount);
         if (balance < amount) {
-            throw new InsufficientFundsException(id, balance, amount);
+            throw new IllegalArgumentException("Solde insuffisant");
         }
         balance -= amount;
     }
