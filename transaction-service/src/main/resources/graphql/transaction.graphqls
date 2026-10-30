@@ -3,6 +3,14 @@ enum TransactionType {
     CREDIT
 }
 
+type Account {
+    id: ID!
+    customerReference: String!
+    status: String!
+    currency: String!
+    balance: Float!
+}
+
 type Transaction {
     id: ID!
     accountId: ID!
@@ -13,6 +21,7 @@ type Transaction {
     type: TransactionType!
     transferId: ID
     createdAt: String!
+    account: Account!
 }
 
 type Transfer {

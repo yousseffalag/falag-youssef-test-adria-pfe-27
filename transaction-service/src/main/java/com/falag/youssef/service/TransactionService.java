@@ -35,18 +35,22 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = true)
-    public List<Transaction> findByAccount(UUID accountId) {
-        return transactionRepository.findByAccountIdOrderByCreatedAtDesc(accountId);
+    public List<TransactionView> findByAccount(UUID accountId) {
+        AccountDto account = accountClient.getAccount(accountId);
+        return transactionRepository.findByAccountIdOrderByCreatedAtDesc(accountId).stream()
+                .map(transaction -> new TransactionView(transaction, account))
+                .toList();
     }
 
     @Transactional(readOnly = true)
-    public Transaction findById(UUID id) {
-        return transactionRepository.findById(id).orElseThrow(() ->
+    public TransactionView findById(UUID id) {
+        Transaction transaction = transactionRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Transaction introuvable : " + id));
+        return new TransactionView(transaction, accountClient.getAccount(transaction.getAccountId()));
     }
 
-    public Transaction create(UUID accountId, BigDecimal requestedAmount, String currency,
-                              String merchantCategory, String country) {
+    public TransactionView create(UUID accountId, BigDecimal requestedAmount, String currency,
+                                  String merchantCategory, String country) {
         BigDecimal amount = validateAmount(requestedAmount);
         AccountDto account = accountClient.getAccount(accountId);
         checkOperable(account, currency);
@@ -62,8 +66,8 @@ public class TransactionService {
                 .type(TransactionType.DEBIT)
                 .createdAt(Instant.now())
                 .build());
-        accountClient.debit(accountId, new OperationRequest(amount, currency));
-        return transaction;
+        AccountDto updatedAccount = accountClient.debit(accountId, new OperationRequest(amount, currency));
+        return new TransactionView(transaction, updatedAccount);
     }
 
     public TransferResult transfer(UUID sourceAccountId, UUID targetAccountId, BigDecimal requestedAmount,
@@ -87,9 +91,10 @@ public class TransactionService {
                 targetAccountId, amount, currency, TransactionType.CREDIT, transferId));
 
         OperationRequest operation = new OperationRequest(amount, currency);
-        accountClient.debit(sourceAccountId, operation);
+        AccountDto updatedSource = accountClient.debit(sourceAccountId, operation);
+        AccountDto updatedTarget;
         try {
-            accountClient.credit(targetAccountId, operation);
+            updatedTarget = accountClient.credit(targetAccountId, operation);
         } catch (RuntimeException transferFailure) {
             try {
                 accountClient.credit(sourceAccountId, operation);
@@ -99,7 +104,8 @@ public class TransactionService {
             throw transferFailure;
         }
 
-        return new TransferResult(transferId, debit, credit);
+        return new TransferResult(transferId, new TransactionView(debit, updatedSource),
+                new TransactionView(credit, updatedTarget));
     }
 
     private Transaction createTransferTransaction(UUID accountId, BigDecimal amount, String currency,

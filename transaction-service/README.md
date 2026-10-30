@@ -6,7 +6,7 @@ créées au démarrage si la base est vide.
 
 `feign/AccountClient` appelle `account-service` avec OpenFeign. Chaque méthode porte une annotation
 `@CircuitBreaker` Resilience4J et un fallback simple qui renvoie une erreur HTTP appropriée sans inventer de données.
-Le plafond local est `1000`.
+Les réponses des transactions incluent aussi les données du compte récupérées par Feign. Le plafond local est `1000`.
 
 ## Lancer
 
