@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -41,7 +42,14 @@ public class AccountService {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
                     "Le solde initial doit être positif ou nul");
         }
-        return accountRepository.save(Account.open(customerReference, currency, balance));
+        Account account = Account.builder()
+                .id(UUID.randomUUID())
+                .customerReference(customerReference)
+                .currency(currency.toUpperCase(Locale.ROOT))
+                .status(AccountStatus.ACTIVE)
+                .balance(balance)
+                .build();
+        return accountRepository.save(account);
     }
 
     public Account changeStatus(UUID id, AccountStatus status) {

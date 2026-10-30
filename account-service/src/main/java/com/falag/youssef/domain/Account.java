@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
-import java.util.Locale;
 
 @Entity
 @Table(name = "accounts")
@@ -43,21 +42,6 @@ public class Account {
 
     @Version
     private Long version;
-
-    public static Account open(String customerReference, String currency, double initialBalance) {
-        return open(UUID.randomUUID(), customerReference, currency, initialBalance, AccountStatus.ACTIVE);
-    }
-
-    public static Account open(UUID id, String customerReference, String currency, double initialBalance,
-                                AccountStatus status) {
-        return Account.builder()
-                .id(id)
-                .customerReference(customerReference)
-                .currency(currency.toUpperCase(Locale.ROOT))
-                .status(status)
-                .balance(initialBalance)
-                .build();
-    }
 
     public void debit(double amount) {
         assertValidAmount(amount);
