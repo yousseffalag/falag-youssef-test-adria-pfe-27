@@ -3,8 +3,8 @@ package com.falag.youssef.mcp;
 import com.falag.youssef.domain.AccountStatus;
 import com.falag.youssef.service.AccountService;
 import com.falag.youssef.web.dto.AccountResponse;
-import org.springframework.ai.mcp.server.annotation.McpTool;
-import org.springframework.ai.mcp.server.annotation.McpToolParam;
+import org.springframework.ai.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
