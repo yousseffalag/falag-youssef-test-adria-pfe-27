@@ -30,3 +30,6 @@ Les requêtes d'exemple sont dans `rest-client-tests.http`.
 
 Le service reste volontairement limité à la gestion des comptes. Les réponses d'erreur utilisent `ResponseStatusException`
 de Spring, sans exceptions métier personnalisées ni handler global.
+
+La console H2 est disponible à l'adresse `http://localhost:8081/h2-console`.
+Dans l'écran de connexion, utiliser l'URL JDBC `jdbc:h2:mem:account-db;DB_CLOSE_DELAY=-1`, l'utilisateur `sa` et un mot de passe vide.
