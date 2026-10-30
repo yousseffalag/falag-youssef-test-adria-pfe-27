@@ -21,6 +21,6 @@ $env:MISTRAL_MODEL="mistral-small-latest"
 
 Les clés restent dans les variables d'environnement et ne doivent pas être ajoutées aux fichiers du projet.
 
-Démarrer Discovery Service, Account Service et Transaction Service, puis lancer `ChatbotServiceApplication` sur le port `8083`. Le Config Service doit aussi être démarré avant Transaction Service.
+Démarrer Discovery Service et Config Service, puis Account Service et Transaction Service. Lancer ensuite `ChatbotServiceApplication` sur le port `8083`. Le chatbot contacte directement les serveurs MCP aux URL `ACCOUNT_MCP_URL` (par défaut `http://localhost:8081`) et `TRANSACTION_MCP_URL` (par défaut `http://localhost:8082`) ; s'ils ne sont pas démarrés ou si ces URL ne sont pas accessibles, le chatbot échoue au démarrage avec `Connection refused`.
 
 Exemples de requêtes REST : `chatbot-client.http`.
