@@ -1,0 +1,26 @@
+@baseUrl = http://localhost:8081
+
+### Lister les comptes de démonstration
+GET {{baseUrl}}/api/accounts
+
+### Trouver un compte par UUID (remplacer l'identifiant)
+GET {{baseUrl}}/api/accounts/11111111-1111-1111-1111-111111111111
+
+### Créer un compte
+POST {{baseUrl}}/api/accounts
+Content-Type: application/json
+
+{
+  "customerReference": "CUST-003",
+  "currency": "EUR",
+  "initialBalance": 1500.00
+}
+
+### Filtrer par client
+GET {{baseUrl}}/api/accounts?customerReference=CUST-001
+
+### GraphQL : lister les comptes (POST /graphql)
+POST {{baseUrl}}/graphql
+Content-Type: application/json
+
+{"query":"{ accounts { id customerReference status currency balance } }"}
