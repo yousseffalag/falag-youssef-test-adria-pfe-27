@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
+import java.util.Locale;
 
 @Entity
 @Table(name = "accounts")
@@ -55,7 +56,7 @@ public class Account {
         return Account.builder()
                 .id(id)
                 .customerReference(customerReference)
-                .currency(currency.toUpperCase())
+                .currency(currency.toUpperCase(Locale.ROOT))
                 .status(status)
                 .balance(initialBalance)
                 .build();
@@ -80,6 +81,9 @@ public class Account {
 
     public void credit(double amount) {
         assertValidAmount(amount);
+        if (!Double.isFinite(balance + amount)) {
+            throw new IllegalArgumentException("Le solde résultant dépasse la plage autorisée");
+        }
         balance += amount;
     }
 

@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.UUID;
+import java.util.Locale;
 
 @Entity
 @Table(name = "transactions")
@@ -57,7 +58,7 @@ public class Transaction {
                 .type(type)
                 .accountId(accountId)
                 .amount(amount.setScale(2, RoundingMode.HALF_UP))
-                .currency(currency.toUpperCase())
+                .currency(currency.toUpperCase(Locale.ROOT))
                 .merchantCategory(merchantCategory)
                 .country(country)
                 .transferId(transferId)
