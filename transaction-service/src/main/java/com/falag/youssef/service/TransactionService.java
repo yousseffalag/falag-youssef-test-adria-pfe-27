@@ -1,6 +1,6 @@
 package com.falag.youssef.service;
 
-import com.falag.youssef.client.AccountClient;
+import com.falag.youssef.feign.AccountClient;
 import com.falag.youssef.client.dto.AccountDto;
 import com.falag.youssef.client.dto.OperationRequest;
 import com.falag.youssef.domain.Transaction;
