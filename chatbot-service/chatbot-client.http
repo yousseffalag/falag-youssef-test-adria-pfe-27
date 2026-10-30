@@ -1,0 +1,15 @@
+### Ask about customer accounts; Gemini can call account-service MCP tools.
+POST http://localhost:8083/api/chat
+Content-Type: application/json
+
+{
+  "message": "Liste les comptes du client CUST-001."
+}
+
+### Ask for transactions; Gemini can call transaction-service MCP tools.
+POST http://localhost:8083/api/chat
+Content-Type: application/json
+
+{
+  "message": "Affiche les transactions du compte 11111111-1111-1111-1111-111111111111."
+}
