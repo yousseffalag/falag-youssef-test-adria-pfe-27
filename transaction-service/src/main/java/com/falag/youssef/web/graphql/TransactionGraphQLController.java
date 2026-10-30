@@ -1,8 +1,6 @@
 package com.falag.youssef.web.graphql;
 
-import com.falag.youssef.service.CreateTransactionCommand;
 import com.falag.youssef.service.TransactionService;
-import com.falag.youssef.service.TransferCommand;
 import com.falag.youssef.service.TransferResult;
 import com.falag.youssef.web.dto.TransactionResponse;
 import com.falag.youssef.web.dto.TransferResponse;
@@ -43,15 +41,14 @@ public class TransactionGraphQLController {
 
     @MutationMapping
     public TransactionResponse createTransaction(@Argument CreateTransactionInput input) {
-        return TransactionResponse.from(transactionService.create(new CreateTransactionCommand(
-                UUID.fromString(input.accountId()), BigDecimal.valueOf(input.amount()), input.currency(),
-                input.merchantCategory(), input.country())));
+        return TransactionResponse.from(transactionService.create(UUID.fromString(input.accountId()),
+                BigDecimal.valueOf(input.amount()), input.currency(), input.merchantCategory(), input.country()));
     }
 
     @MutationMapping
     public TransferResponse createTransfer(@Argument TransferInput input) {
-        TransferResult result = transactionService.transfer(new TransferCommand(UUID.fromString(input.sourceAccountId()),
-                UUID.fromString(input.targetAccountId()), BigDecimal.valueOf(input.amount()), input.currency()));
+        TransferResult result = transactionService.transfer(UUID.fromString(input.sourceAccountId()),
+                UUID.fromString(input.targetAccountId()), BigDecimal.valueOf(input.amount()), input.currency());
         return new TransferResponse(result.transferId(), TransactionResponse.from(result.debit()),
                 TransactionResponse.from(result.credit()));
     }

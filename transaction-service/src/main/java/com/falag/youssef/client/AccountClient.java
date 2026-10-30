@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.UUID;
 
 @FeignClient(name = "account-service", url = "${services.account.url:http://localhost:8081}",
-        path = "/api/accounts", fallbackFactory = AccountClientFallbackFactory.class,
-        configuration = com.falag.youssef.config.FeignConfig.class)
+        path = "/api/accounts")
 public interface AccountClient {
 
     @GetMapping("/{id}")

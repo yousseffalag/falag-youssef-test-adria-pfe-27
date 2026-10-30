@@ -1,8 +1,6 @@
 package com.falag.youssef.mcp;
 
-import com.falag.youssef.service.CreateTransactionCommand;
 import com.falag.youssef.service.TransactionService;
-import com.falag.youssef.service.TransferCommand;
 import com.falag.youssef.service.TransferResult;
 import com.falag.youssef.web.dto.TransactionResponse;
 import com.falag.youssef.web.dto.TransferResponse;
@@ -51,8 +49,8 @@ public class TransactionMcpTools {
             @McpToolParam(description = "Code devise", required = true) String currency,
             @McpToolParam(description = "Catégorie du commerçant", required = true) String merchantCategory,
             @McpToolParam(description = "Code pays", required = true) String country) {
-        return TransactionResponse.from(transactionService.create(new CreateTransactionCommand(parse(accountId), amount,
-                currency, merchantCategory, country)));
+        return TransactionResponse.from(transactionService.create(parse(accountId), amount, currency,
+                merchantCategory, country));
     }
 
     @McpTool(name = "create_transfer",
@@ -64,8 +62,8 @@ public class TransactionMcpTools {
             @McpToolParam(description = "UUID du compte cible", required = true) String targetAccountId,
             @McpToolParam(description = "Montant positif", required = true) BigDecimal amount,
             @McpToolParam(description = "Code devise", required = true) String currency) {
-        TransferResult result = transactionService.transfer(new TransferCommand(parse(sourceAccountId),
-                parse(targetAccountId), amount, currency));
+        TransferResult result = transactionService.transfer(parse(sourceAccountId), parse(targetAccountId),
+                amount, currency);
         return new TransferResponse(result.transferId(), TransactionResponse.from(result.debit()),
                 TransactionResponse.from(result.credit()));
     }

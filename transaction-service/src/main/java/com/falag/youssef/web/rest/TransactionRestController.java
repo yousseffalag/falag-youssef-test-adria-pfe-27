@@ -1,8 +1,6 @@
 package com.falag.youssef.web.rest;
 
-import com.falag.youssef.service.CreateTransactionCommand;
 import com.falag.youssef.service.TransactionService;
-import com.falag.youssef.service.TransferCommand;
 import com.falag.youssef.service.TransferResult;
 import com.falag.youssef.web.dto.CreateTransactionRequest;
 import com.falag.youssef.web.dto.TransactionResponse;
@@ -35,8 +33,8 @@ public class TransactionRestController {
     @PostMapping("/transactions")
     @ResponseStatus(HttpStatus.CREATED)
     public TransactionResponse create(@Valid @RequestBody CreateTransactionRequest request) {
-        return TransactionResponse.from(transactionService.create(new CreateTransactionCommand(
-                request.accountId(), request.amount(), request.currency(), request.merchantCategory(), request.country())));
+        return TransactionResponse.from(transactionService.create(request.accountId(), request.amount(),
+                request.currency(), request.merchantCategory(), request.country()));
     }
 
     @GetMapping("/transactions")
@@ -52,8 +50,8 @@ public class TransactionRestController {
     @PostMapping("/transfers")
     @ResponseStatus(HttpStatus.CREATED)
     public TransferResponse transfer(@Valid @RequestBody TransferRequest request) {
-        TransferResult result = transactionService.transfer(new TransferCommand(request.sourceAccountId(),
-                request.targetAccountId(), request.amount(), request.currency()));
+        TransferResult result = transactionService.transfer(request.sourceAccountId(), request.targetAccountId(),
+                request.amount(), request.currency());
         return new TransferResponse(result.transferId(), TransactionResponse.from(result.debit()),
                 TransactionResponse.from(result.credit()));
     }

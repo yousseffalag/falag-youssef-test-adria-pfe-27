@@ -3,10 +3,10 @@ package com.falag.youssef.service;
 import com.falag.youssef.client.AccountClient;
 import com.falag.youssef.client.dto.AccountDto;
 import com.falag.youssef.client.dto.OperationRequest;
-import com.falag.youssef.config.BankTransactionProperties;
 import com.falag.youssef.domain.Transaction;
 import com.falag.youssef.domain.TransactionType;
 import com.falag.youssef.repository.TransactionRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,13 +25,13 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final AccountClient accountClient;
-    private final BankTransactionProperties properties;
+    private final BigDecimal maxAmount;
 
     public TransactionService(TransactionRepository transactionRepository, AccountClient accountClient,
-                              BankTransactionProperties properties) {
+                              @Value("${bank.transaction.max-amount}") BigDecimal maxAmount) {
         this.transactionRepository = transactionRepository;
         this.accountClient = accountClient;
-        this.properties = properties;
+        this.maxAmount = maxAmount;
     }
 
     @Transactional(readOnly = true)
@@ -45,52 +45,54 @@ public class TransactionService {
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Transaction introuvable : " + id));
     }
 
-    public Transaction create(CreateTransactionCommand command) {
-        BigDecimal amount = validateAmount(command.amount());
-        AccountDto account = accountClient.getAccount(command.accountId());
-        checkOperable(account, command.currency());
+    public Transaction create(UUID accountId, BigDecimal requestedAmount, String currency,
+                              String merchantCategory, String country) {
+        BigDecimal amount = validateAmount(requestedAmount);
+        AccountDto account = accountClient.getAccount(accountId);
+        checkOperable(account, currency);
         checkFunds(account, amount);
 
         Transaction transaction = transactionRepository.save(Transaction.builder()
                 .id(UUID.randomUUID())
-                .accountId(command.accountId())
+                .accountId(accountId)
                 .amount(amount)
-                .currency(command.currency().toUpperCase(Locale.ROOT))
-                .merchantCategory(command.merchantCategory())
-                .country(command.country())
+                .currency(currency.toUpperCase(Locale.ROOT))
+                .merchantCategory(merchantCategory)
+                .country(country)
                 .type(TransactionType.DEBIT)
                 .createdAt(Instant.now())
                 .build());
-        accountClient.debit(command.accountId(), new OperationRequest(amount, command.currency()));
+        accountClient.debit(accountId, new OperationRequest(amount, currency));
         return transaction;
     }
 
-    public TransferResult transfer(TransferCommand command) {
-        BigDecimal amount = validateAmount(command.amount());
-        if (command.sourceAccountId().equals(command.targetAccountId())) {
+    public TransferResult transfer(UUID sourceAccountId, UUID targetAccountId, BigDecimal requestedAmount,
+                                   String currency) {
+        BigDecimal amount = validateAmount(requestedAmount);
+        if (sourceAccountId.equals(targetAccountId)) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
                     "Le compte source et le compte cible doivent être différents");
         }
 
-        AccountDto source = accountClient.getAccount(command.sourceAccountId());
-        AccountDto target = accountClient.getAccount(command.targetAccountId());
-        checkOperable(source, command.currency());
-        checkOperable(target, command.currency());
+        AccountDto source = accountClient.getAccount(sourceAccountId);
+        AccountDto target = accountClient.getAccount(targetAccountId);
+        checkOperable(source, currency);
+        checkOperable(target, currency);
         checkFunds(source, amount);
 
         UUID transferId = UUID.randomUUID();
         Transaction debit = transactionRepository.save(createTransferTransaction(
-                command.sourceAccountId(), amount, command.currency(), TransactionType.DEBIT, transferId));
+                sourceAccountId, amount, currency, TransactionType.DEBIT, transferId));
         Transaction credit = transactionRepository.save(createTransferTransaction(
-                command.targetAccountId(), amount, command.currency(), TransactionType.CREDIT, transferId));
+                targetAccountId, amount, currency, TransactionType.CREDIT, transferId));
 
-        OperationRequest operation = new OperationRequest(amount, command.currency());
-        accountClient.debit(command.sourceAccountId(), operation);
+        OperationRequest operation = new OperationRequest(amount, currency);
+        accountClient.debit(sourceAccountId, operation);
         try {
-            accountClient.credit(command.targetAccountId(), operation);
+            accountClient.credit(targetAccountId, operation);
         } catch (RuntimeException transferFailure) {
             try {
-                accountClient.credit(command.sourceAccountId(), operation);
+                accountClient.credit(sourceAccountId, operation);
             } catch (RuntimeException compensationFailure) {
                 transferFailure.addSuppressed(compensationFailure);
             }
@@ -123,9 +125,9 @@ public class TransactionService {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
                     "Le montant doit comporter au plus deux décimales");
         }
-        if (normalized.compareTo(properties.maxAmount()) > 0) {
+        if (normalized.compareTo(maxAmount) > 0) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Le montant dépasse le plafond autorisé (" + properties.maxAmount() + ")");
+                    "Le montant dépasse le plafond autorisé (" + maxAmount + ")");
         }
         return normalized;
     }
