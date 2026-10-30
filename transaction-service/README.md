@@ -18,3 +18,6 @@ mvn spring-boot:run
 Les requêtes d'exemple figurent dans `rest-client-tests.http`. REST est sous `/api`, GraphQL sous `/graphql` et les
 outils MCP sont publiés par le serveur MCP du service.
 
+La console H2 est accessible à `http://localhost:8082/h2-console`. Utiliser l'URL JDBC
+`jdbc:h2:mem:transactiondb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE`, l'utilisateur `sa` et un mot de passe vide.
+
