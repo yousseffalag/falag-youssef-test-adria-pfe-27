@@ -14,8 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
-@FeignClient(name = "account-service", url = "${services.account.url:http://localhost:8081}",
-        path = "/api/accounts")
+@FeignClient(name = "account-service", path = "/api/accounts")
 public interface AccountClient {
 
     @GetMapping("/{id}")
