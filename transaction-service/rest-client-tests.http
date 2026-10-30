@@ -1,0 +1,27 @@
+@baseUrl = http://localhost:8082
+
+### Créer un débit de 250 EUR sur le compte de démonstration
+POST {{baseUrl}}/api/transactions
+Content-Type: application/json
+
+{
+  "accountId": "11111111-1111-1111-1111-111111111111",
+  "amount": 250.00,
+  "currency": "EUR",
+  "merchantCategory": "GROCERY",
+  "country": "MA"
+}
+
+### Historique du compte
+GET {{baseUrl}}/api/transactions?accountId=11111111-1111-1111-1111-111111111111
+
+### Virement vers un autre compte
+POST {{baseUrl}}/api/transfers
+Content-Type: application/json
+
+{
+  "sourceAccountId": "11111111-1111-1111-1111-111111111111",
+  "targetAccountId": "22222222-2222-2222-2222-222222222222",
+  "amount": 100.00,
+  "currency": "EUR"
+}
